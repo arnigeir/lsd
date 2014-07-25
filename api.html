@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Store API</title>
+        <script src="lsd.js" type="text/javascript" charset="utf-8"></script>
+		
+		<script>
+			function log(text){
+				var e = document.getElementById("console");
+				e.innerHTML += text + "<br/>";
+			}
+			
+			function run(){
+				var i,store = LSD();
+				store.Create("Library");
+				if(store.Library){
+					log("created a Library database");
+				}
+				
+				store.Library.Create("Books");
+				if(store.Library.Books){
+					log("created a Books catalog");
+				}
+				store.Library.Books.DeleteAllItems();
+				
+				store.Library.Create("Sales");
+				if(store.Library.Sales){
+					log("created a Sales catalog");
+				}
+				store.Library.Sales.DeleteAllItems();
+				
+				var oid = store.Library.Books.Insert({title:"Conan",authorid:2,year:1972});
+				if(oid){
+					log("inserted a book with oid = "+oid);
+				}
+				var salesOid = store.Library.Sales.Insert({bookid:oid,totalsales:3244});
+				
+				
+				
+				oid = store.Library.Books.Insert({title:"The Barbarian",authorid:2,year:1973});
+				if(oid){
+					log("inserted another book with oid = "+oid);
+				}
+				store.Library.Sales.Insert({bookid:oid,totalsales:1000});
+				
+				var book = store.Library.Books.GetByOid(oid);
+				if(book){
+					log("GetByOid("+oid+") returned "+JSON.stringify(book));
+				}
+				
+
+				//the filter function returns a filtered Catalog object
+				var books = store.Library.Books.Filter(function(b) { return b.year === 1973;}).ToArray();
+				if(books){
+					log("Found "+books.length+" books published the year 1973:");
+					for(i=0;i<books.length;i++){
+						log("&nbsp;&nbsp;"+JSON.stringify(books[i]));
+					}
+				}
+				//calculate total books sold
+				var sales =  store.Library.Sales.Filter(function(b) { return true;}).Reduce( function(s,o) { return s+o.totalsales;});
+				log("Total sales = "+ sales);
+				
+				//join sales to books
+				books = store.Library.Books.Join(store.Library.Sales,"sales", function(b,s) { return b.oid === s.bookid; } ).ToArray();
+				var allBooks = store.Library.Books.ToArray();
+				log("Joined sales to all books : "+JSON.stringify(allBooks));
+				
+				allBooks[0].title = "New Title";
+				log("Changed the title of the first book");
+				store.Library.Books.Update(allBooks[0]);
+				log("Updated book"); 
+			}
+		</script>
+	</head>
+	<body onload="run()">
+		<div id="console"></div>
+	</body>
+</html>

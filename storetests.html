@@ -1,0 +1,111 @@
+<!Doctype HTML>
+<html>
+<head>
+	<META http-equiv="Content-Script-Type" content="text/javascript">
+	<link rel="stylesheet" href="lib/qunit.css">
+	<script src="lsd.js"></script>
+	<script src="lib/qunit.js"></script>
+	<style>		
+		*{
+			font-family: 'Helvetica Neue Light', HelveticaNeue-Light, 'Helvetica Neue', Calibri, Helvetica, Arial, sans-serif;
+		}
+		h2{
+			color:#0d3349;
+		}
+	</style>
+</head>
+<body>
+	<div><h2>UNIT tests for LSD api</h2></div>
+ <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+  <script>
+
+	function author(firstname,lastname){
+		return {firstname:firstname,lastname:lastname};
+	}
+	function book(authorid,title,year){
+		return {authorid:authorid,title:title,year:year};
+	}
+	
+	test( "Test Catalog.Insert and GetByOid functions", function(){
+		
+		var store,author,id,book,items,michaelCrictonId;
+		store = LSD();
+		store.Create("Library");
+		ok(store.Library,"created Library database");
+		store.Library.Create("Authors");
+		ok(store.Library.Authors,"created Authors catalog");
+		store.Library.Create("Books");
+		ok(store.Library.Books,"created Books catalog");
+		
+		store.Library.Books.DeleteAllItems();
+		items = store.Library.Books.Filter(function(b) { return true; }).ToArray();
+		equal(0,items.length,"Deleted all books successfully");
+		
+		
+		store.Library.Authors.DeleteAllItems();
+		id = store.Library.Authors.Insert({"firstname":"Arthur C","lastname":"Clark"});
+		michaelCrictonId = store.Library.Authors.Insert({"firstname":"Michael","lastname":"Crichton"});		
+		
+		items = store.Library.Authors.Filter(function(b) { return true; }).ToArray();
+		equal(items.length,2,"Two authors inserted");
+		
+		author = store.Library.Authors.GetByOid(michaelCrictonId);
+		equal(author.firstname,"Michael","Inserted and retreived the author object from Authors catalog");
+		
+		author = store.Library.Books.GetByOid(michaelCrictonId);
+		ok(!author,"Author id does not exist in Books catalog");
+		
+		store.Library.Books.Insert({"authorid":michaelCrictonId,"title":"Congo","published":1980});
+		store.Library.Books.Insert({"authorid":michaelCrictonId,"title":"The Andromeda Stain","published":1969});
+		store.Library.Books.Insert({"authorid":michaelCrictonId,"title":"Rising Sun","published":1992});
+		store.Library.Books.Insert({"authorid":michaelCrictonId,"title":"Airframe","published":1995});
+		//insert a modified book object
+		store.Library.Books.Insert({"authorid":michaelCrictonId,"title":"Swarm","published":1002,"genre":"SCIFI"});
+		
+		
+		//get all books by author
+		items = store.Library.Books.Filter(function(b) { return b.authorid === michaelCrictonId; }).ToArray();
+		
+		ok(items,"Found books");
+		equal(items.length,5,"Found exactly 5 books");
+		//find the airframe book
+		items = store.Library.Books.Filter(function(b) { return b.title === "Airframe"; }).ToArray();
+		
+		equal(items.length,1,"Found exactly one book");
+		equal(items[0].title,"Airframe","Found the correct book");
+		
+		items[0].published = 1996;
+		
+		store.Library.Books.Update(items[0]);
+		items = store.Library.Books.Filter(function(b) { return b.title === "Airframe"; }).ToArray();
+		equal(items[0].published,1996,"Book updated correctly");
+		
+		//find book by genre
+		items = store.Library.Books.Filter( function(b) { return b.genre == 'SCIFI';}).ToArray();
+		equal(items.length,1,"Found book by genre");
+		equal(items[0].title,"Swarm","Found the correct book 'Swarm'");
+		
+		//join authors and books so that authors have a new array property 'books' 
+		
+		items = store.Library.Authors.Join(store.Library.Books,'books', function(a,b) { return a.oid === b.authorid ;}).ToArray();
+
+		equal(items.length,2,"Join two authors with their books");
+		
+		
+		items = store.Library.Authors.Filter(function(a){ return a.oid === michaelCrictonId;}).Join(store.Library.Books,'books', function(a,b) { return a.oid === b.authorid;}).ToArray();		
+		
+		equal(items.length,1,"Joined author Michael Cricton with his books");
+		
+		equal(items[0].books.length,5,"Cricton has 5 books joined");
+		
+	});
+	
+	
+	
+
+	
+  </script>
+
+</body>
+</html>
