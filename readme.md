@@ -1,5 +1,7 @@
-=LSD
-==A Local Storage Database
+LSD
+===
+A Local Storage Database
+---
 A simple noSQL database implementation that uses 
 the browsers localStorage to persist its data.
 
@@ -8,11 +10,13 @@ like:
 
 	lsd = LSD();
 
-==The Database object
+The Database object
+===
 
 The LSD object has a single Create method to create or initialize databases 
 
-===Create a new database 
+Create a new database 
+===
 
 	lsd.Create('Library');
 
