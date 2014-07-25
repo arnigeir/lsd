@@ -216,7 +216,7 @@ function Query(items){
 	}
 	
 	that.Reduce = function(reduce){
-		var aggregate=0,i=0;
+		var aggregate,i;
 		if(reduce){
 			for(i=0;i<items.length;i++){
 				aggregate = reduce(aggregate,items[i]);

@@ -26,15 +26,12 @@ can be used to create catalogs to hold JavaScript objects.
 
 If the Library database already exists this method has no effect but it is better to 
 call it in the case the database does not already exist as that will throw exceptions when
-trying to access the database.
+trying to access the database that does not exist.
 
 The Catalog object
 ---
 
-When the Library database has been created we can call its Create method to create some 
-catalogs.   A catalog is simply a object storage for similar objects.   That does not mean you 
-cannot store different objects in a single catalogue but a database with catalog names corresponding to
-object types is easier to use.
+Each database can contain one ore more catalogs.  A catalog is simply a object storage for similar objects, like Books, Authors and the like.   You can of course store all your different objects in a single catalog but using descriptive catalog name for each type of object is much easier to understand and maintain.
 
 Create a new catalog
 ---
@@ -43,8 +40,9 @@ Lets create a Authors and Books catalogs in our Library database.
 	lsd.Library.Create('Books');
 	lsd.Library.Create('Authors');
 
-So now we have two catalogs in the Library database for books and authors respectively.  If the catalogue
-exists the Create method quietly returns without doing anything.
+So now we have two catalogs in the Library database for books and authors respectively.  
+
+Note that if a catalog already exists the Create method quietly returns without doing anything.
 
 Those two catalogs are now properties of the Library object in LSD in the same way the Library
 object is a property of LSD.   Those objects can be accessed simply as 
@@ -55,8 +53,8 @@ and
 
 	lsd.Library.Authors
 
-The Catalog object has several methods to manage objects like inserting (Insert) , updating (Update) ,
-delete (Delete) and retrieve (Filter) JavaScript objects.
+The Catalog object has several methods to manage it's objects like inserting (Insert) new ones , updating (Update) existing ones ,
+delete (Delete) and retrieve (Filter) the objects.
 
 Insert new object into a Catalog
 ---
@@ -74,26 +72,26 @@ Retrieve a object by its object id (oid)
 	var airframe = lsd.Library.Books.GetByOid(bookOid);
 	alert(airframe.title);
 
-Note that the GetByOid uses the oid to locate the stored object and returns a instance of the
+Note that the GetByOid uses the object identifier (oid) to locate the stored object and returns a instance of the
 object.  
 
 If the original book object had custom methods they will not be stored or returned from LSD but
 only the value properties.
 Update a object
 ---
-We can now modify the airframe object and update in the LSD database
+We can now modify the airframe book object and update the LSD database
 
 	airframe.title = "The airframe";
 	lsd.Library.Books.Update(airframe);
 
-This works because the airframe object returned from LSD has a additional 'oid' property value that 
-identifies it within the Books catalogue.
+This works because the airframe book object returned from LSD has a  'oid' property value that 
+identifies it within the Books catalog.
     
-Caution: Do not change the oid's value in your code.
+Caution: Do not change the oid value in your code as that might cause havoc in your application or database.
 
 Delete a object 
 ---
-The object can be deleted simply by passing it to the Delete method of the catalogue
+The object can be deleted simply by passing it to the Delete method of the catalog.
 
 	lsd.Library.Books.Delete(airframe);
 
@@ -106,11 +104,10 @@ To delete all objects from a catalog
 	
 The Query object
 ---
-Now this is all fine but in it self not very impressive.   The Catalog object additionally has 
-a method to return objects (Filter) from a catalog based on some user constraint.  The Filter method
-actually returns a Query object that has couple of methods to further manipulate the values from Filter. We 
-will take a more detailed look at Query later but only explain one method ToArray() that returns the objects
-returned by Filter as a JavaScript array of the objects.
+Now this is all fine but in it self it is not very impressive.   The Catalog object additionally has 
+a Filter method to return selected objects  from a catalog based on some user constraint.  The Filter method
+returns a Query object that has couple of methods to further manipulate the values from Filter. We 
+will take a more detailed look at Query later but at the moment only explain the method "ToArray()" that a JavaScript array of the objects in the query.
 
 	var books = lsd.Library.Books.Filter( function(b) { return b.author === "Michael Cricton" }).ToArray();
 
@@ -120,13 +117,11 @@ The 'books' object is a JavaScript array with a single book, 'Airframe'.
 
 will display 'Airframe'.
 
-Instead of just returning a JavaScript array of data-objects we can return the Query object 
-itself:
+My omitting the ToArray() method we get the Query object.
 
 	var query = lsd.Library.Books.Filter( function(b) { return b.author === "Michael Crichton" });
 
-The Query object has methods to iterate and change objects (Map),aggregate objects or properties of objects (Reduce), get a single object by its index (Get), query 
-the objects further (Filter), return the objects as an array (ToArray) and finally join the objects to other objects (Join)
+The Query object has methods to iterate and change objects (Map),aggregate objects or properties of objects (Reduce), get a single object by its index (Get), query the objects further (Filter), return the objects as an array (ToArray) as above and finally join the objects to other objects (Join) in different catalogs.
 
 Map(foo)
 ---
@@ -194,8 +189,7 @@ Will display the number of items in the query object.
 
 Join(catalog,name,foo)
 ---
-Items in catalog can contain related items, like authors and their books as in the above example.  If we want 
-to get author objects WITH all their books we can use the Join() method to return all the authors we 
+If we want to get author objects WITH all their books we can use the Join() method to return all the authors we 
 are interested in and insert a 'books' property containing a array with all the book objects belonging to them.
 
 Lets assume that we have inserted reference 'authorid' in the 'book' objects to the oid property of the 
