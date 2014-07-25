@@ -11,12 +11,12 @@ like:
 	lsd = LSD();
 
 The Database object
-===
+---
 
 The LSD object has a single Create method to create or initialize databases 
 
 Create a new database 
-===
+---
 
 	lsd.Create('Library');
 
@@ -28,14 +28,16 @@ If the Library database already exists this method has no effect but it is bette
 call it in the case the database does not already exist as that will throw exceptions when
 trying to access the database.
 
-==The Catalog object
+The Catalog object
+---
 
 When the Library database has been created we can call its Create method to create some 
 catalogs.   A catalog is simply a object storage for similar objects.   That does not mean you 
 cannot store different objects in a single catalogue but a database with catalog names corresponding to
 object types is easier to use.
 
-===Create a new catalog
+Create a new catalog
+---
 Lets create a Authors and Books catalogs in our Library database.
 
 	lsd.Library.Create('Books');
@@ -56,7 +58,8 @@ and
 The Catalog object has several methods to manage objects like inserting (Insert) , updating (Update) ,
 delete (Delete) and retrieve (Filter) JavaScript objects.
 
-===Insert new object into a Catalog
+Insert new object into a Catalog
+---
 
 	var bookOid = lsd.Library.Books.Insert({title:'Airframe',author:'Michael Crichton'});
 
@@ -65,7 +68,8 @@ Stores the book Airframe by Michael Crichton in the catalog Books in Library dat
 The Insert function creates a unique object id (oid) for the inserted book object and returns it.
 This id can be used to retrieve the inserted object
 
-===Retrieve a object by its object id (oid)
+Retrieve a object by its object id (oid)
+---
 
 	var airframe = lsd.Library.Books.GetByOid(bookOid);
 	alert(airframe.title);
@@ -75,7 +79,8 @@ object.
 
 If the original book object had custom methods they will not be stored or returned from LSD but
 only the value properties.
-===Update a object
+Update a object
+---
 We can now modify the airframe object and update in the LSD database
 
 	airframe.title = "The airframe";
@@ -86,18 +91,21 @@ identifies it within the Books catalogue.
     
 Caution: Do not change the oid's value in your code.
 
-===Delete a object 
+Delete a object 
+---
 The object can be deleted simply by passing it to the Delete method of the catalogue
 
 	lsd.Library.Books.Delete(airframe);
 
-===Delete all objects
+Delete all objects
+---
 To delete all objects from a catalog 
 
 	lsd.Library.Books.DeleteAll();
 	
 	
-===The Query object
+The Query object
+---
 Now this is all fine but in it self not very impressive.   The Catalog object additionally has 
 a method to return objects (Filter) from a catalog based on some user constraint.  The Filter method
 actually returns a Query object that has couple of methods to further manipulate the values from Filter. We 
@@ -120,7 +128,8 @@ itself:
 The Query object has methods to iterate and change objects (Map),aggregate objects or properties of objects (Reduce), get a single object by its index (Get), query 
 the objects further (Filter), return the objects as an array (ToArray) and finally join the objects to other objects (Join)
 
-===Map(foo)
+Map(foo)
+---
 Lets say we want to split the 'author' property into 'firstname' and 'lastname' and add those as properties to the 
 returned objects
 
@@ -143,7 +152,8 @@ The 'mapped' query now has all the objects from 'query' with the additional prop
 
 We can continue to modify all the objects in 'mapped' by calling the Map function on 'mapped'.
 
-===Reduce(foo)
+Reduce(foo)
+---
 The Reduce method has a single function parameter that must define two parameters, the aggregate object 
 and the object to aggregate
 
@@ -163,7 +173,8 @@ The above aggregate is the number of books by Michael Crichton in the Books cata
 A point to note is that the aggregate function must check if the aggregate is defined and if not initialize it with some 
 value.   This value can be a number (as in the above example) or any JavaScript object we wish the aggregate to be. 
 
-===Get(i)
+Get(i)
+---
 
 We can get objects from Query by their index (which is not the same as the object id - or oid).
 
@@ -171,7 +182,8 @@ We can get objects from Query by their index (which is not the same as the objec
 	
 returns the first item from the query or 'undefined' if the query is empty.
 
-===Length()
+Length()
+---
 
 If we want to check how many items are in a query 
 
@@ -180,7 +192,8 @@ If we want to check how many items are in a query
 
 Will display the number of items in the query object.
 
-===Join(catalog,name,foo)
+Join(catalog,name,foo)
+---
 Items in catalog can contain related items, like authors and their books as in the above example.  If we want 
 to get author objects WITH all their books we can use the Join() method to return all the authors we 
 are interested in and insert a 'books' property containing a array with all the book objects belonging to them.
