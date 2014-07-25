@@ -2,10 +2,10 @@ LSD
 ===
 A Local Storage Database
 ---
-A simple noSQL database implementation that uses 
-the browsers localStorage to persist its data.
+A really simple noSQL database implementation that uses 
+the browsers localStorage to persist its data and a functional api to manage and query.
 
-The database consist of a single object called LSD that is initialized by calling its construction
+The database API consist of a single object called LSD that is initialized by calling its construction
 like:
 
 	lsd = LSD();
