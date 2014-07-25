@@ -59,7 +59,12 @@
 					}
 				}
 				//calculate total books sold
-				var sales =  store.Library.Sales.Filter(function(b) { return true;}).Reduce( function(s,o) { return s+o.totalsales;});
+				var sales =  store.Library.Sales.Filter(function(b) { return true;}).Reduce( function(s,o) { 
+					if(!s) {
+						s = 0;
+					}
+					return s+o.totalsales;
+				});
 				log("Total sales = "+ sales);
 				
 				//join sales to books
