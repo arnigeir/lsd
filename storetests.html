@@ -29,7 +29,7 @@
 	
 	test( "Test Catalog.Insert and GetByOid functions", function(){
 		
-		var store,author,id,book,items,michaelCrictonId;
+		var store,author,id,book,items,michaelCrichtonId;
 		store = LSD();
 		store.Create("Library");
 		ok(store.Library,"created Library database");
@@ -45,27 +45,27 @@
 		
 		store.Library.Authors.DeleteAllItems();
 		id = store.Library.Authors.Insert({"firstname":"Arthur C","lastname":"Clark"});
-		michaelCrictonId = store.Library.Authors.Insert({"firstname":"Michael","lastname":"Crichton"});		
+		michaelCrichtonId = store.Library.Authors.Insert({"firstname":"Michael","lastname":"Crichton"});		
 		
 		items = store.Library.Authors.Filter(function(b) { return true; }).ToArray();
 		equal(items.length,2,"Two authors inserted");
 		
-		author = store.Library.Authors.GetByOid(michaelCrictonId);
+		author = store.Library.Authors.GetByOid(michaelCrichtonId);
 		equal(author.firstname,"Michael","Inserted and retreived the author object from Authors catalog");
 		
-		author = store.Library.Books.GetByOid(michaelCrictonId);
+		author = store.Library.Books.GetByOid(michaelCrichtonId);
 		ok(!author,"Author id does not exist in Books catalog");
 		
-		store.Library.Books.Insert({"authorid":michaelCrictonId,"title":"Congo","published":1980});
-		store.Library.Books.Insert({"authorid":michaelCrictonId,"title":"The Andromeda Stain","published":1969});
-		store.Library.Books.Insert({"authorid":michaelCrictonId,"title":"Rising Sun","published":1992});
-		store.Library.Books.Insert({"authorid":michaelCrictonId,"title":"Airframe","published":1995});
+		store.Library.Books.Insert({"authorid":michaelCrichtonId,"title":"Congo","published":1980});
+		store.Library.Books.Insert({"authorid":michaelCrichtonId,"title":"The Andromeda Stain","published":1969});
+		store.Library.Books.Insert({"authorid":michaelCrichtonId,"title":"Rising Sun","published":1992});
+		store.Library.Books.Insert({"authorid":michaelCrichtonId,"title":"Airframe","published":1995});
 		//insert a modified book object
-		store.Library.Books.Insert({"authorid":michaelCrictonId,"title":"Swarm","published":1002,"genre":"SCIFI"});
+		store.Library.Books.Insert({"authorid":michaelCrichtonId,"title":"Swarm","published":1002,"genre":"SCIFI"});
 		
 		
 		//get all books by author
-		items = store.Library.Books.Filter(function(b) { return b.authorid === michaelCrictonId; }).ToArray();
+		items = store.Library.Books.Filter(function(b) { return b.authorid === michaelCrichtonId; }).ToArray();
 		
 		ok(items,"Found books");
 		equal(items.length,5,"Found exactly 5 books");
@@ -93,11 +93,11 @@
 		equal(items.length,2,"Join two authors with their books");
 		
 		
-		items = store.Library.Authors.Filter(function(a){ return a.oid === michaelCrictonId;}).Join(store.Library.Books,'books', function(a,b) { return a.oid === b.authorid;}).ToArray();		
+		items = store.Library.Authors.Filter(function(a){ return a.oid === michaelCrichtonId;}).Join(store.Library.Books,'books', function(a,b) { return a.oid === b.authorid;}).ToArray();		
 		
-		equal(items.length,1,"Joined author Michael Cricton with his books");
+		equal(items.length,1,"Joined author Michael Crichton with his books");
 		
-		equal(items[0].books.length,5,"Cricton has 5 books joined");
+		equal(items[0].books.length,5,"Crichton has 5 books joined");
 		
 	});
 	

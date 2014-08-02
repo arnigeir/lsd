@@ -10,6 +10,7 @@ delete(o) - deletes item o
 */
 
 function DefaultStorage(databaseName,catalogName){
+	'use strict';
 	var that = {},
 		key = "jstore."+databaseName+"."+catalogName,
 		catalogData,
@@ -178,6 +179,7 @@ function Catalog(storage){
 //query objects are returned by catalog queries and chained queries
 //queries can not alter the state of catalogs
 function Query(items){
+	'use strict';
 	var that = {};
 
 	//returns the i'th item of the query result
@@ -265,6 +267,7 @@ function Query(items){
 }
 
 function Database(databaseName){
+	'use strict';
     var that = {};
     //creates a new catalog
     that.Create = function(catalogName){
@@ -276,6 +279,7 @@ function Database(databaseName){
 
 
 function LSD(){
+	'use strict';
     var that = {};
 	
     //create a new database and add to this store object
