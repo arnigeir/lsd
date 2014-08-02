@@ -55,6 +55,7 @@ and
 The Catalog object has several methods to manage it's objects like inserting (Insert) new ones , updating (Update) existing ones ,
 delete (Delete) and retrieve (Filter) the objects.
 
+
 Insert new object into a Catalog
 ---
 
@@ -205,6 +206,25 @@ the title of the first book of the first author in the returned query.
 
 You can easily chain more joins to join authors to other objects if needed, like a star join in SQL or chain any 
 of the other Query functions like Map,Reduce or Filter to make more complicated constructs.
+
+
+The Local Storage and LSD
+===
+If you open the api.html file in Chrome or Firefox then open the developers tools and take a view at the Local Storage object (in Resources in Chrome).  Your LSD objects should display there with the keys jstore.<database name>.<catalog name>
+
+<b>jstore.Library.Authors</b></br>
+{"database":"Library","catalog":"Authors","cnt":93,"items":[{"firstname":"Arthur C","lastname":"Clark","oid":91},{"firstname":"Michael","lastname":"Crichton","oid":92}]}
+
+<b>jstore.Library.Books</b></br>
+{"database":"Library","catalog":"Books","cnt":333,"items":[{"title":"Conan","authorid":2,"year":1972,"oid":331},{"title":"The Barbarian","authorid":2,"year":1973,"oid":332}]}
+
+<b>jstore.Library.Sales</b></br>
+{"database":"Library","catalog":"Sales","cnt":67,"items":[{"bookid":331,"totalsales":3244,"oid":65},{"bookid":332,"totalsales":1000,"oid":66}]}
+
+NOTE: If you are using a later version of the LSD library the "jstore" might have been changed to "lsd".
+
+All your objects in a catalog are stored as JSON strings so you can easily read them directly into your javascript code, just as other local storage 
+objects. 
 
 
  
