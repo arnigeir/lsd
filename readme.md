@@ -5,8 +5,7 @@ A Local Storage Database
 A really simple noSQL database implementation that uses 
 the browsers localStorage to persist its data and a functional api to manage and query.
 
-The database API consist of a single object called LSD that is initialized by calling its construction
-like:
+The database API consist of a single object called LSD:
 
 	lsd = LSD();
 
@@ -31,18 +30,18 @@ trying to access the database that does not exist.
 The Catalog object
 ---
 
-Each database can contain one ore more catalogs.  A catalog is simply a object storage for similar objects, like Books, Authors and the like.   You can of course store all your different objects in a single catalog but using descriptive catalog name for each type of object is much easier to understand and maintain.
+Each database can contain one ore more catalogs.  A catalog is simply a object storage for similar types  of objects, like library books could have a dedicated Books catalog, book authors a Authors catalog et cetera.   You can of course store different objects types in a single catalog but using descriptive catalog name for each type of object is much easier in the long run to understand and maintain.
 
-Create a new catalog
----
-Lets create a Authors and Books catalogs in our Library database.
+The Library.Create() is used to create new catalogs:
 
 	lsd.Library.Create('Books');
 	lsd.Library.Create('Authors');
 
-So now we have two catalogs in the Library database for books and authors respectively.  
+So now we have two catalogs in the Library database that can be used for books and authors respectively.  
 
-Note that if a catalog already exists the Create method quietly returns without doing anything.
+Note that if a catalog already exists the Create method quietly returns without doing anything.  The LSD() method has already loaded all the 
+catalogs that were previously created and they can be accessed irrelevant of the Create() method call above.  It is though a good idea to 
+call the create method just to make sure that the needed catalogs are created just in case to avoid exception later in you code.
 
 Those two catalogs are now properties of the Library object in LSD in the same way the Library
 object is a property of LSD.   Those objects can be accessed simply as 
@@ -104,9 +103,8 @@ To delete all objects from a catalog
 	
 The Query object
 ---
-Now this is all fine but in it self it is not very impressive.   The Catalog object additionally has 
-a Filter method to return selected objects  from a catalog based on some user constraint.  The Filter method
-returns a Query object that has couple of methods to further manipulate the values from Filter. We 
+The Catalog object additionally has a Filter method to return selected objects  from a catalog based on some user constraint.  
+The Filter method returns a Query object that has couple of methods to further manipulate the values from Filter. We 
 will take a more detailed look at Query later but at the moment only explain the method "ToArray()" that a JavaScript array of the objects in the query.
 
 	var books = lsd.Library.Books.Filter( function(b) { return b.author === "Michael Cricton" }).ToArray();
