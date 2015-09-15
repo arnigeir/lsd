@@ -2,10 +2,26 @@ LSD
 ===
 A Local Storage Database
 ---
-A really simple noSQL database implementation that uses 
-the browsers localStorage to persist its data and a functional api to manage and query.
+A really simple noSQL JavaScript database implementation that uses 
+the browsers localStorage to persist its data.  The idea can easily be 
+moved onto a node.js server where the data is persisted on disk.
 
-The database API consist of a single object called LSD:
+Here is a small applications that stores information about cars and car makers.
+
+lsd = LSD();
+lsd.Create('Cars');
+lsd.Cars.Create("Makers");
+lsd.Cars.Create("Models");
+var audiOID = lsd.Cars.Makers.Insert({name:'Audi',country:'Germany'});
+lsd.Cars.Models.Insert({makeroid:audiOID,name:'Audi A1'});
+
+
+
+The API
+---
+
+All API objects are wrapped inside the LSD object.   The LSD object is created
+as:
 
 	lsd = LSD();
 
@@ -14,37 +30,50 @@ The Database object
 
 The LSD object has a single Create method to create or initialize databases 
 
-Create a new database 
+Create a database 
 ---
 
 	lsd.Create('Library');
 
-creates a Library database in the local storage.  This creates a 
-database property object in the lsd instance with the same name that 
-can be used to create catalogs to hold JavaScript objects.
+   
+The only thing this call does is to create a Database property called <b>Library</b>.
 
-If the Library database already exists this method has no effect but it is better to 
-call it in the case the database does not already exist as that will throw exceptions when
-trying to access the database that does not exist.
+    lsd.Library
+   
+If a 'Library' object exists in your LocalStorage then this function call is 
+similar to Connect(..) method for SQL databases. 
+
+NOTE: If a Database object is not 'created' then it cannot be accessed in your code.
+
+The Database object exposes one Create() function.   This function takes a 
+single string argument and creates a Catalog object.
+
+   lsd.Library.Create('CatalogName');
+
 
 The Catalog object
 ---
 
-Each database can contain one ore more catalogs.  A catalog is simply a object storage for similar types  of objects, like library books could have a dedicated Books catalog, book authors a Authors catalog et cetera.   You can of course store different objects types in a single catalog but using descriptive catalog name for each type of object is much easier in the long run to understand and maintain.
+Each database can contain one or more catalogs.  A catalog is simply a storage for similar types  of objects.  Our Library database could have a  Books catalog and a  Authors catalog.
 
-The Library.Create() is used to create new catalogs:
+You can of course store different objects types in a single catalog but using descriptive catalog name for each type of object is much easier to understand and makes your code more 
+logical.
+
+You use the lsd.Library.Create() method create new catalogs:
 
 	lsd.Library.Create('Books');
 	lsd.Library.Create('Authors');
 
 So now we have two catalogs in the Library database that can be used for books and authors respectively.  
 
-Note that if a catalog already exists the Create method quietly returns without doing anything.  The LSD() method has already loaded all the 
-catalogs that were previously created and they can be accessed irrelevant of the Create() method call above.  It is though a good idea to 
-call the create method just to make sure that the needed catalogs are created just in case to avoid exception later in you code.
+The above Create() method does two things.   First it creates a Catalog property in the 
+Database object <b>lsd.Library</b> and secondly it opens up a catalog storage if it exists else
+it will create a new one.
 
-Those two catalogs are now properties of the Library object in LSD in the same way the Library
-object is a property of LSD.   Those objects can be accessed simply as 
+You can test this be running the above steps and view your browsers LocalStorage.  You should see two keys ; <b>lsd.Library.Authors</b> and <b>lsd.Library.Books</b>.  
+
+Those two catalogs are now properties of the Library object in the same way the Library
+object is a property of lsd.   Those objects can be accessed simply as 
 
 	lsd.Library.Books 
 	
@@ -52,8 +81,43 @@ and
 
 	lsd.Library.Authors
 
-The Catalog object has several methods to manage it's objects like inserting (Insert) new ones , updating (Update) existing ones ,
-delete (Delete) and retrieve (Filter) the objects.
+The Catalog object has methods to insert,update,delete and query objects.
+
+<ul>
+    <li>Insert(obj) inserts a new object</li>
+    <li>Update(obj) updates existing object </li>
+    <li>Delete(obj) deletes a object<li>
+    <li>GetByOid(id) returns a object with given id</li>
+</ul>
+
+The Catalog also wraps several Query methods:
+
+<ul>
+<li>Filter(callback) Returns selected object from catalog and returns as a Query object</li>
+<li>Map(callback) Applies the callback function to all elements and returns those as a Query object</li>
+<li>Reduce(callback) Aggregates 
+<li>
+
+	//returns a Query object containing filtered list of items
+	that.Filter = function(filter){
+		return Query(storage.getItems()).Filter(filter);
+	}
+	
+	//returns a Query object with  list of mapped items
+	that.Map = function(map){
+		return Query(storage.getItems()).Map(map);
+	}
+	that.Reduce = function(reduce){
+		return Query(storage.getItems()).Reduce(reduce);
+	}
+	
+	//join all objects in this catalog with objects in 
+	//the catalog parameter using the join function
+	that.Join = function(catalog,name,join){
+		return Query(storage.getItems()).Join(catalog,name,join);
+	}    
+ 
+    <li>Filter(xisting objects ,delete (Delete) and retrieve (Filter) the objects.
 
 
 Insert new object into a Catalog
@@ -210,7 +274,7 @@ of the other Query functions like Map,Reduce or Filter to make more complicated 
 
 The Local Storage and LSD
 ===
-If you open the api.html file in Chrome or Firefox then open the developers tools and take a view at the Local Storage object (in Resources in Chrome).  Your LSD objects should display there with the keys jstore.<database name>.<catalog name>
+If you open the api.html file in Chrome or Firefox then open the developers tools and take a view at the Local Storage object (in Resources in Chrome).  Your LSD objects should should be visible there with the keys jstore.<database name>.<catalog name>
 
 <b>jstore.Library.Authors</b></br>
 {"database":"Library","catalog":"Authors","cnt":93,"items":[{"firstname":"Arthur C","lastname":"Clark","oid":91},{"firstname":"Michael","lastname":"Crichton","oid":92}]}
@@ -221,7 +285,7 @@ If you open the api.html file in Chrome or Firefox then open the developers tool
 <b>jstore.Library.Sales</b></br>
 {"database":"Library","catalog":"Sales","cnt":67,"items":[{"bookid":331,"totalsales":3244,"oid":65},{"bookid":332,"totalsales":1000,"oid":66}]}
 
-NOTE: If you are using a later version of the LSD library the "jstore" might have been changed to "lsd".
+NOTE: If you are using a later version of the LSD library then "jstore" might have changed to "lsd".
 
 All your objects in a catalog are stored as JSON strings so you can easily read them directly into your javascript code, just as other local storage 
 objects. 

@@ -27,16 +27,16 @@
 		return {authorid:authorid,title:title,year:year};
 	}
 	
-	test( "Test Catalog.Insert and GetByOid functions", function(){
+	test( "Test API", function(){
 		
 		var store,author,id,book,items,michaelCrichtonId;
 		store = LSD();
 		store.Create("Library");
-		ok(store.Library,"created Library database");
+		ok(store.Library,"Created Library database");
 		store.Library.Create("Authors");
-		ok(store.Library.Authors,"created Authors catalog");
+		ok(store.Library.Authors,"Created Authors catalog");
 		store.Library.Create("Books");
-		ok(store.Library.Books,"created Books catalog");
+		ok(store.Library.Books,"Created Books catalog");
 		
 		store.Library.Books.DeleteAllItems();
 		items = store.Library.Books.Filter(function(b) { return true; }).ToArray();
@@ -86,7 +86,8 @@
 		equal(items.length,1,"Found book by genre");
 		equal(items[0].title,"Swarm","Found the correct book 'Swarm'");
 		
-		//join authors and books so that authors have a new array property 'books' 
+		//join authors and books 
+        //after join the authors objects have a array property 'books' 
 		
 		items = store.Library.Authors.Join(store.Library.Books,'books', function(a,b) { return a.oid === b.authorid ;}).ToArray();
 
@@ -97,7 +98,9 @@
 		
 		equal(items.length,1,"Joined author Michael Crichton with his books");
 		
-		equal(items[0].books.length,5,"Crichton has 5 books joined");
+		equal(items[0].books.length,5,"Crichton author object has 5 books");
+        
+        equal(items[0].books[0].title,"Congo","Found 'Congo'");
 		
 	});
 	

@@ -11,8 +11,9 @@ delete(o) - deletes item o
 
 function DefaultStorage(databaseName,catalogName){
 	'use strict';
+    
 	var that = {},
-		key = "jstore."+databaseName+"."+catalogName,
+		key = "lsd."+databaseName+"."+catalogName,
 		catalogData,
 		json;
 	
@@ -129,19 +130,12 @@ function Catalog(storage){
 	that.Delete = function(o){
 		storage.delete(o);
 	}
-	//deprecated
+    
 	that.DeleteAllItems = function(){
-		storage.deleteAllItems();
-	}	
-	that.DeleteAll = function(){
 		storage.deleteAllItems();
 	}
 	
-	//returns the items in this catalog as array
-	//Deprecated
-	that.ToArray = function(){
-		return storage.getItems();
-	}
+
 	
 
 	
@@ -170,6 +164,11 @@ function Catalog(storage){
 	that.Join = function(catalog,name,join){
 		return Query(storage.getItems()).Join(catalog,name,join);
 	}
+    
+    that.ToArray = function()
+    {
+        return Query(storage.getItems()).ToArray();
+    }
 	
 	return that;
     
@@ -254,7 +253,6 @@ function Query(items){
 			}
 		}
 		return Query(items);
-		
 	}
 	
 	
