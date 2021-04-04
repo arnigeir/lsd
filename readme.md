@@ -170,17 +170,17 @@ The Query object
 ---
 The Catalog object additionally has a Filter method to return selected objects  from a catalog based on some user constraint.  
 The Filter method returns a Query object that has couple of methods to further manipulate the values from Filter. We 
-will take a more detailed look at Query later but at the moment only explain the method "ToArray()" that a JavaScript array of the objects in the query.
+will take a more detailed look at the Query object later but at the moment only explain the method "ToArray()" that returns a JavaScript array.
 
 	var books = lsd.Library.Books.Filter( function(b) { return b.author === "Michael Cricton" }).ToArray();
 
-The 'books' object is a JavaScript array with a single book, 'Airframe'.
+The 'books' object is a JavaScript array with a single book object of the book 'Airframe'.  Try it and then display with 
 
-	alert(books[0].title)
+	console.log(books[0].title)
 
-will display 'Airframe'.
 
-My omitting the ToArray() method we get the Query object.
+
+By omitting the ToArray() method we get the Query object.
 
 	var query = lsd.Library.Books.Filter( function(b) { return b.author === "Michael Crichton" });
 
