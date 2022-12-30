@@ -7,14 +7,14 @@ the browsers localStorage to persist its data.  The idea can easily be
 moved onto a node.js server where the data is persisted on disk.
 
 Here is a small applications that stores information about cars and car makers.
-
+``` 
 lsd = LSD();
 lsd.Create('Cars');
 lsd.Cars.Create("Makers");
 lsd.Cars.Create("Models");
 var audiOID = lsd.Cars.Makers.Insert({name:'Audi',country:'Germany'});
 lsd.Cars.Models.Insert({makeroid:audiOID,name:'Audi A1'});
-
+```
 
 
 The API
